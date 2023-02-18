@@ -1,15 +1,9 @@
 const express = require('express');
-const uuid = require('uuid');
-const app = express();
-const path = require('path');
-const mongoose = require('mongoose');
+const db = require('./config/connection');
 const { User } = require('./models');
 
-mongoose.set('strictQuery', true);
-mongoose.connect('mongodb://127.0.0.1:27017/socialmedia')
-  .catch(error => console.log('MongoDB connection error', error));
-
 const PORT = process.env.PORT || 3001;
+const app = express();
 
 app.use(express.json());
 
@@ -69,4 +63,6 @@ app.delete('/api/users/:id', async (req, res) => {
   res.status(204).send();
 })
 
-app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));
+db.once('open', () => {
+  app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));
+});
