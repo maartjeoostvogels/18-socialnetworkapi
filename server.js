@@ -26,12 +26,12 @@ app.get('/api/users/:id', async (req, res) => {
 })
 
 // Create a user
-app.post('/api/users', (req, res) => {
+app.post('/api/users', async (req, res) => {
   const { username, email } = req.body;
 
   if (username && email) {
     const user = new User({ username, email });
-    user.save();
+    await user.save();
 
     res.json(user);
   } else {
