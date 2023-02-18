@@ -2,54 +2,36 @@ const express = require('express');
 const uuid = require('uuid');
 const app = express();
 const path = require('path');
-
 const mongoose = require('mongoose');
+const { User } = require('./models');
+
 mongoose.set('strictQuery', true);
-
-async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/socialmedia');
-}
-
-// TODO: Move this to models/user.js
-const userSchema = new mongoose.Schema({
-  username: String,
-  email: String
-});
-
-const User = mongoose.model('User', userSchema);
-// END TODO MOVE
-
-main().catch(err => console.log(err));
+mongoose.connect('mongodb://127.0.0.1:27017/socialmedia')
+  .catch(error => console.log('MongoDB connection error', error));
 
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 
-app.get('/', (req, res) =>
-  res.json('hello world')
-);
-
-app.get('/api/users', (req, res) => {
-  User.find({}, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(result);
-    }
-  });
+// Get list of all users
+app.get('/api/users', async (req, res) => {
+  const users = await User.find({});
+  res.json(users);
 });
 
-app.get('/api/users/:id', (req, res) => {
+// Get a single user by id
+app.get('/api/users/:id', async (req, res) => {
   const id = req.params.id;
-  User.findById(id, function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
-      res.json(result);
-    }
-  });
+  const user = await User.findById(id).exec();
+  if (!user) {
+    res.status(404).json('User not found');
+  }
+  else {
+    res.json(user);
+  }
 })
 
+// Create a user
 app.post('/api/users', (req, res) => {
   const { username, email } = req.body;
 
@@ -57,25 +39,34 @@ app.post('/api/users', (req, res) => {
     const user = new User({ username, email });
     user.save();
 
-    res.json(user)
+    res.json(user);
+  } else {
+    res.json({
+      error: 'error, please provide a username and email for the user'
+    });
   }
+});
 
-  res.json({
-    error: 'error, please provide a username and email for the user'
-  });
-})
-
-app.delete('/api/users/:id', (req, res) => {
+// Update a user
+app.put('/api/users/:id', async (req, res) => {
   const id = req.params.id;
-  User.findOneAndDelete(id, function (err, result) {
-    if (err){
-        console.log(err)
-    }
-    else{
-        console.log("Deleted User : ", result);
-        res.json("Deleted User " + result.username);
-    };
-  });
+  const user = await User.findById(id);
+  if (!user) {
+    res.status(404).json('User not found');
+  }
+  else {
+    user.username = req.body.username;
+    user.email = req.body.email;
+    await user.save();
+    res.json(user);
+  }
+});
+
+// Delete a user
+app.delete('/api/users/:id', async (req, res) => {
+  const id = req.params.id;
+  await User.findOneAndDelete(id).exec();
+  res.status(204).send();
 })
 
 app.listen(PORT, () => console.log(`Listening on PORT: ${PORT}`));
