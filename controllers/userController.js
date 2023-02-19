@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 module.exports = {
   async getUsers(req, res) {
@@ -59,8 +59,13 @@ module.exports = {
     const { userId } = req.params;
 
     try {
-      await User.findByIdAndDelete(id).exec();
-      res.status(204).send();
+      const user = await User.findByIdAndDelete(userId).exec();
+      if (user) {
+        await Thought.deleteMany({ username: user.username });
+        res.status(204).send();
+      } else {
+        res.status(404).json('User not found');
+      }
     } catch (err) {
       console.log(err);
       res.status(500).json({ message: 'Something went wrong' });
