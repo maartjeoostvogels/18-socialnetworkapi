@@ -11,25 +11,20 @@ const {
 
 const router = Router();
 
-// Get list of all users
-router.get('/', getUsers);
+// /api/users
+router.route('/')
+  .get(getUsers)
+  .post(createUser);
 
-// Get a single user by id
-router.get('/:id', getUser);
+// /api/users/:userId
+router.route('/:userId')
+  .get(getUser)
+  .put(updateUser)
+  .delete(deleteUser);
 
-// Create a user
-router.post('/', createUser);
-
-// Update a user
-router.put('/:id', updateUser);
-
-// Delete a user
-router.delete('/:id', deleteUser);
-
-// Add friend to friends list
-router.post('/:id/friends/:friendId', addFriend);
-
-// Delete friend from friends list
-router.delete('/:id/friends/:friendId', deleteFriend);
+// /api/users/:userId/friends/:friendId
+router.route('/:userId/friends/:friendId')
+  .post(addFriend)
+  .delete(deleteFriend);
 
 module.exports = router;

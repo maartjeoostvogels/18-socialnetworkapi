@@ -6,10 +6,10 @@ module.exports = {
     res.json(thoughts);
   },
   async getThought(req, res) {
-    const id = req.params.id;
+    const { thoughtId } = req.params;
 
     try {
-      const thought = await Thought.findById(id).exec();
+      const thought = await Thought.findById(thoughtId).exec();
 
       if (thought) {
         return res.json(thought);
@@ -41,10 +41,10 @@ module.exports = {
     }
   },
   async updateThought(req, res) {
-    const id = req.params.id;
+    const { thoughtId } = req.params;
 
     try {
-      const thought = await Thought.findById(id);
+      const thought = await Thought.findById(thoughtId);
 
       if (thought) {
         const { thoughtText, username } = req.body;
@@ -62,10 +62,10 @@ module.exports = {
     }
   },
   async deleteThought(req, res) {
-    const id = req.params.id;
+    const { thoughtId } = req.params;
 
     try {
-      await Thought.findByIdAndDelete(id).exec();
+      await Thought.findByIdAndDelete(thoughtId).exec();
       res.status(204).send();
     } catch (err) {
       console.log(err);
@@ -114,4 +114,4 @@ module.exports = {
       res.status(500).json({ message: 'Something went wrong' });
     }
   }
-}
+};

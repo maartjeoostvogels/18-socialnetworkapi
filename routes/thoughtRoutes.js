@@ -11,25 +11,20 @@ const {
 
 const router = Router();
 
-// Get list of all thoughts
-router.get('/', getThoughts);
+// /api/thoughts
+router.route('/')
+  .get(getThoughts)
+  .post(createThought);
 
-// Get a single thought by id
-router.get('/:id', getThought);
+// /api/thoughts/:thoughId
+router.route('/:thoughtId')
+  .get(getThought)
+  .put(updateThought)
+  .delete(deleteThought);
 
-// Create a thought
-router.post('/', createThought);
-
-// Update a thought
-router.put('/:id', updateThought);
-
-// Delete a thought
-router.delete('/:id', deleteThought);
-
-// Create a reaction
-router.post('/:thoughtId/reactions', addReaction);
-
-// Delete a reaction
-router.delete('/:thoughtId/reactions', deleteReaction);
+// /api/thoughts/:thoughtId/reactions
+router.route('/:thoughtId/reactions')
+  .post(addReaction)
+  .delete(deleteReaction);
 
 module.exports = router;

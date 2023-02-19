@@ -6,10 +6,10 @@ module.exports = {
     res.json(users);
   },
   async getUser(req, res) {
-    const id = req.params.id;
+    const { userId } = req.params;
 
     try {
-      const user = await User.findById(id).exec();
+      const user = await User.findById(userId).exec();
 
       if (user) {
         return res.json(user);
@@ -35,10 +35,10 @@ module.exports = {
     }
   },
   async updateUser(req, res) {
-    const id = req.params.id;
+    const { userId } = req.params;
 
     try {
-      const user = await User.findById(id);
+      const user = await User.findById(userId);
 
       if (user) {
         const { username, email } = req.body;
@@ -56,7 +56,7 @@ module.exports = {
     }
   },
   async deleteUser(req, res) {
-    const id = req.params.id;
+    const { userId } = req.params;
 
     try {
       await User.findByIdAndDelete(id).exec();
@@ -67,10 +67,10 @@ module.exports = {
     }
   },
   async addFriend(req, res) {
-    const { id, friendId } = req.params;
+    const { userId, friendId } = req.params;
 
     try {
-      const user = await User.findByIdAndUpdate(id, { $addToSet: { friends: friendId } });
+      await User.findByIdAndUpdate(userId, { $addToSet: { friends: friendId } });
       res.status(204).send();
     } catch (err) {
       console.log(err);
@@ -78,10 +78,10 @@ module.exports = {
     }
   },
   async deleteFriend(req, res) {
-    const { id, friendId } = req.params;
+    const { userId, friendId } = req.params;
 
     try {
-      const user = await User.findByIdAndUpdate(id, { $pull: { friends: friendId } });
+      await User.findByIdAndUpdate(userId, { $pull: { friends: friendId } });
       res.status(204).send();
     } catch (err) {
       console.log(err);
