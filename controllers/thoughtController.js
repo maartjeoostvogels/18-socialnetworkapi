@@ -33,7 +33,7 @@ module.exports = {
 
         res.json(thought);
       } else {
-        res.status(404).json('Username not found');
+        res.status(400).json('Username not found');
       }
     } catch (err) {
       console.log(err);
@@ -54,7 +54,7 @@ module.exports = {
 
         res.json(thought);
       } else {
-        res.status(404).json('User not found');
+        res.status(404).json('Thought not found');
       }
     } catch (err) {
       console.log(err);
@@ -77,16 +77,21 @@ module.exports = {
     const { reactionBody, username } = req.body;
 
     try {
-      const thought = await Thought.findByIdAndUpdate(
-        thoughtId,
-        { $push: { reactions: { reactionBody, username } } },
-        { returnDocument: 'after' }
-      ).exec();
+      const user = await User.findOne({username});
+      if (user) {
+        const thought = await Thought.findByIdAndUpdate(
+          thoughtId,
+          { $push: { reactions: { reactionBody, username } } },
+          { returnDocument: 'after' }
+        ).exec();
 
-      if (thought) {
-        res.json(thought);
+        if (thought) {
+          res.json(thought);
+        } else {
+          res.status(404).json('Thought not found');
+        }
       } else {
-        res.status(404).json('Thought not found');
+        res.status(400).json('Username not found');
       }
     } catch (err) {
       console.log(err);
