@@ -17,8 +17,13 @@ const reactionSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        get: date => Date.toLocaleString(date),
+        get: date => date.toLocaleString(),
     },
+},
+{
+  toJSON: {
+    getters: true,
+  }
 });
 
 const thoughtSchema = new Schema({
@@ -31,13 +36,18 @@ const thoughtSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-    get: date => Date.toLocaleString(date),
+    get: date => date.toLocaleString()
   },
   username: {
     type: String,
     required: true,
   },
   reactions: [reactionSchema],
+},
+{
+  toJSON: {
+    getters: true,
+  }
 });
 
 const Thought = model('Thought', thoughtSchema);
