@@ -25,3 +25,4 @@ THEN I am able to successfully create and delete reactions to thoughts and add a
 
 ## Video Walkthrough
 
+Watch [video walkthrough](https://drive.google.com/file/d/1UATQ_4ls4Evcvo13UXpQSTM6KyHQgsxI/view?usp=share_link)
